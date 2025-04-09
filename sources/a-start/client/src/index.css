@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+	/* Primary colors - Soft sage/mint */
+	--color-primary-50: #effef7;
+	--color-primary-100: #d8f8e8;
+	--color-primary-200: #b8efd7;
+	--color-primary-300: #88e0c0;
+	--color-primary-400: #5acca6;
+	--color-primary-500: #30b089;
+	--color-primary-600: #209070;
+	--color-primary-700: #1c735c;
+	--color-primary-800: #1a5b4b;
+	--color-primary-900: #174b3f;
+	--color-primary-accent: #88e0c0;
+
+	/* Secondary colors - Soft powder pink */
+	--color-secondary-50: #fef2f3;
+	--color-secondary-100: #fde6e9;
+	--color-secondary-200: #fbd0d9;
+	--color-secondary-300: #f7acbd;
+	--color-secondary-400: #f1809a;
+	--color-secondary-500: #e45a7c;
+	--color-secondary-600: #d03a60;
+	--color-secondary-700: #af2c4e;
+	--color-secondary-800: #912742;
+	--color-secondary-900: #7a253a;
+	--color-secondary-accent: #f7acbd;
+
+	/* Tertiary colors - Soft periwinkle/lavender */
+	--color-tertiary-50: #f3f4ff;
+	--color-tertiary-100: #e9ecff;
+	--color-tertiary-200: #d6dafe;
+	--color-tertiary-300: #b9bffd;
+	--color-tertiary-400: #989afb;
+	--color-tertiary-500: #7b7af7;
+	--color-tertiary-600: #6661ea;
+	--color-tertiary-700: #554cd0;
+	--color-tertiary-800: #473faa;
+	--color-tertiary-900: #3c398a;
+	--color-tertiary-accent: #b9bffd;
+}
+
+@keyframes bounce {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-15px); }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "local:reseed": "rm database.db && bunx drizzle-kit generate && bunx drizzle-kit migrate && bun run src/db/seeders/index.ts",
+    "local:seed": "bunx drizzle-kit generate && bunx drizzle-kit migrate && bun run src/db/seeders/index.ts"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "@elysiajs/swagger": "^1.2.2",
+    "@libsql/client": "^0.15.2",
+    "drizzle-orm": "^0.41.0",
+    "drizzle-typebox": "^0.3.1",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "drizzle-kit": "^0.30.6",
+    "tsx": "^4.19.3"
+  },
+  "module": "src/index.js"
+}
