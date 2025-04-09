@@ -409,4 +409,204 @@ Langkah-langkahnya adalah sebagai berikut:
    npm install zustand
    ```
 
-1. asd
+1. Buat file baru `store/index.js` dan modifikasi file menjadi seperti berikut:
+
+   ```js
+   import { create } from "zustand";
+
+   // Di sini kita akan membuat sebuah store (tempat menampung state secara global)
+   // via fungsi `create` dari zustand
+
+   // Untuk konvensi penamaannya, biasanya ditulis dengan camelCase, dan karena ini hooks, maka gunakan use<NamaDomain / NamaState>Store.
+   // Karena ini Counter, maka kita akan menggunakan nama useCounterStore
+   export const useCounterStore = create(
+     // [PARAMS] create menerima sebuah fungsi yang menerima 1 parameter:
+     // - `set` ini digunakan untuk mengubah state secara global
+     // [RETURN] create megembalikan objek yang berisi:
+     // - state yang berisi data yang akan digunakan
+     // - method untuk mengubah state
+     (set) => ({
+       // State atau data global
+       counter: {
+         firstNumber: 100,
+         secondNumber: 500,
+       },
+
+       // Method yang nanti bisa digunakan
+       // Bila ingin memberikan data, kita gunakan parameter di dalam fungsi ini
+       increaseFirst: () =>
+         // set merupakan fungsi yang digunakan untuk mengubah state secara global
+         // Menerima sebuah fungsi yang akan mengembalikan objek yang berisi data yang akan digunakan
+
+         set(
+           // Fungsi di dalam ini bisa menerima state
+           // Yang akan digunakan untuk memodifikasi variable global (state) yang ada di dalam store
+
+           // TL;DR:
+           // Fungsi yang kita definisikan (1) akan menerima sebuah fungsi bernama `set` (2)
+           // `set` akan menerima sebuah fungsi untuk memodifikasi state (3)
+           (state) => ({
+             // ! State ini SEHARUSNYA bersifat immutable sehingga seharusnya, bila datanya nested, kita membutuhkan spread operator
+             // ! NAMUN pada zustand, hal ini tidak diperlukan lagi, karena secara OTOMATIS, hal ini sudah dilakukan, enak kan?
+             // ...state,
+             counter: {
+               // ! SAYANGNYA, hal ini hanya berlaku pada LEVEL PERTAMA SAJA!
+               // Karena counter ini adalah state di LEVEL KEDUA, sehingga kita perlu menggunakan spread operator untuk menggabungkan state lama dengan state baru
+               ...state.counter,
+               firstNumber: state.counter.firstNumber + 1,
+             },
+           }),
+         ),
+     }),
+   );
+
+   export default useCounterStore;
+   ```
+
+1. Modifikasi halaman `pages/CounterPage.jsx` untuk menggunakan `useCounterStore` yang sudah kita definisikan:
+
+   ```jsx
+   // eslint-disable-next-line no-unused-vars
+   import { motion } from "motion/react";
+   import { useState } from "react";
+   import CounterCount from "../components/counter/CounterCount";
+
+   // Import "hooks" useCounterStore
+   import { useCounterStore } from "../stores";
+
+   const CounterPage = () => {
+     // Di sini kita tinggal import state dan method apa saja yang digunakan
+     const { counter, increaseFirst } = useCounterStore((state) => state);
+
+     // ! Supaya tidak terjadi bentrok, maka counter akan direname menjadi counterOld
+     const [counterOld, setCounter] = useState({
+       firstNumber: 0,
+       secondNumber: 100,
+     });
+
+     // ! Supaya tidak bentrok, maka fungsi ini akan dicomment
+     // const increaseFirst = () => {
+     // 	setCounter({
+     // 		...counter,
+     // 		firstNumber: counter.firstNumber + 1,
+     // 	});
+     // };
+
+     const decreaseFirst = () => {
+       setCounter({
+         ...counter,
+         firstNumber: counter.firstNumber - 1,
+       });
+     };
+
+     const increaseSecond = () => {
+       setCounter({
+         ...counter,
+         secondNumber: counter.secondNumber + 1,
+       });
+     };
+
+     const decreaseSecond = () => {
+       setCounter({
+         ...counter,
+         secondNumber: counter.secondNumber - 1,
+       });
+     };
+
+     const reset = () => {
+       setCounter({
+         firstNumber: 0,
+         secondNumber: 100,
+       });
+     };
+
+     return (
+       <>
+         {/* Main Content */}
+         <main className="flex-grow flex items-center justify-center p-6">
+           <motion.div
+             className="text-center bg-secondary-100 p-8 rounded-xl shadow-lg mx-auto"
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.6 }}
+           >
+             <motion.div
+               initial={{ scale: 0.9 }}
+               animate={{ scale: 1 }}
+               transition={{
+                 type: "spring",
+                 stiffness: 260,
+                 damping: 20,
+               }}
+             >
+               <h2 className="text-2xl font-medium text-secondary-400 mb-2">Counter</h2>
+
+               <div className="flex gap-4 items-center justify-center">
+                 <CounterCount
+                   counterNumber={counter.firstNumber}
+                   increase={increaseFirst}
+                   decrease={decreaseFirst}
+                 />
+
+                 <CounterCount
+                   counterNumber={counter.secondNumber}
+                   increase={increaseSecond}
+                   decrease={decreaseSecond}
+                 />
+               </div>
+             </motion.div>
+
+             <div className="flex justify-center gap-3">
+               <motion.button
+                 onClick={reset}
+                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg"
+                 whileHover={{ scale: 1.05 }}
+                 whileTap={{ scale: 0.95 }}
+               >
+                 Reset
+               </motion.button>
+             </div>
+           </motion.div>
+         </main>
+       </>
+     );
+   };
+
+   export default CounterPage;
+   ```
+
+   Coba jalankan dan lihat hasilnya, apakah:
+
+   - angka pertama menjadi 100,
+   - angka kedua menjadi 500, dan
+   - `increase` angka pertama bisa berjalan?
+
+Nah sampai di titik ini, sebenarnya sudah cukup mudah, tapi kita masih merasakan hal berikut:
+
+- `Loh kok kayak state lagi sih?`,
+- `Jadi masih ribet donk yah?`
+- `Malah jadi harus mikir "level nested" nya yah?`
+
+Lalu kita harus bagaimana yah?
+
+Nah di titik inilah `immer` comes to rescue!
+
+### Step 4 - Zustand + Immer = steroid kuadrat!
+
+[`immer`](https://immerjs.github.io/immer/) adalah suatu package yang memudahkan kita untuk membuat state yang bersifat immutable tanpa harus menggunakan spread operator.
+
+Dan bagusnya apa? `immer` ini sangat gampang sekali untuk diintegrasikan dengan `zustand`.
+
+Jadi mari kita langsung gabungkan saja `immer` dengan `zustand`.
+
+Di sini, kita akan menyelesaikan `zustand` untuk bisa menggunakan seluruh fungsi untuk Counter yah!
+
+Langkah-langkahnya adalah sebagai berikut:
+
+1. Install package `immer` dengan perintah:
+
+   ```sh
+   npm install immer
+   ```
+
+1. Modifikasi file `stores/index.js` menjadi sebagai berikut:
