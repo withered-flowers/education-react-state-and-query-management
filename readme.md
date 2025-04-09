@@ -335,4 +335,78 @@ Bukalah folder `sources/a-start` dan kita akan mulai untuk demo.
 
 Yuk, kita mulai!
 
-### Step 1 - Setup Project
+### Step 1 - Setup Project (Server)
+
+> Apabila tidak ingin install `bun` atau tidak menggunakan `bun`, maka step ini boleh di-skip yah !
+
+1. Buka terminal, selanjutnya akan kita sebut `terminal-server`
+1. Pindah ke folder `sources/a-start/server` dengan perintah:
+
+   ```sh
+   cd sources/a-start/server
+   ```
+
+1. Install package dengan perintah:
+
+   ```sh
+   bun install
+   ```
+
+1. Copy file `.env.example` menjadi file `.env`
+1. Jalankan server dengan perintah:
+
+   ```sh
+   bun run local:seed
+   bun run dev
+   ```
+
+1. Pastikan setelah menjalankan perintah di atas, muncul pesan `🦊 Elysia is running at localhost:3000`
+
+Sampai di tahap ini, kita sudah berhasil menjalankan server kita dan siap untuk menjalankan client kita.
+
+### Step 2 - Setup Project (Client)
+
+Pada langkah ini kita akan menggunakan `npm` yang sudah kita sayangi dan gunakan terus-terusan yah !
+
+Di sini kita akan menjalankan client (`React`) yang sudah dibuat sebelumnya, adapun langkah-langkahnya adalah sebagai berikut:
+
+1. Buka terminal, selanjutnya akan kita sebut `terminal-client`
+1. Buka folder `sources/a-start/client` dengan perintah:
+
+   ```sh
+   cd sources/a-start/client
+   ```
+
+1. Install package dengan perintah:
+
+   ```sh
+   npm install
+   ```
+
+1. Jalankan client dengan perintah:
+
+   ```sh
+   npm run dev
+   ```
+
+1. Pastikan setelah menjalankan perintah di atas, muncul pesan `➜  Local:   http://localhost:5173/`
+
+1. Buka browser dan buka tautan `http://localhost:5173`
+
+Sampai di tahap ini, kita sudah berhasil menjalankan client kita, dan kita sudah siap untuk menambahkan kode untuk belajar penggunaan `Zustand` dan `TanStack Query`.
+
+### Step 3 - State Management dengan `Zustand`
+
+Pada langkah ini kita akan mengganti state `count` yang sebelumnya menggunakan `useState` dan beberapa fungsi yang memodifikasi state tersebut (`increase`, `decrease`, dan `reset`) dengan menggunakan `Zustand`.
+
+Langkah-langkahnya adalah sebagai berikut:
+
+1. Pindah ke `terminal-client`
+1. Stop aplikasi yang berjalan dengan `CTRL + C`
+1. Install package `zustand` dengan perintah:
+
+   ```sh
+   npm install zustand
+   ```
+
+1. asd

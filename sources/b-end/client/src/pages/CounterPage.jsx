@@ -5,6 +5,18 @@ import { useState } from "react";
 const CounterPage = () => {
 	const [count, setCount] = useState(0);
 
+	const increase = () => {
+		setCount(count + 1);
+	};
+
+	const decrease = () => {
+		setCount(count - 1);
+	};
+
+	const reset = () => {
+		setCount(0);
+	};
+
 	return (
 		<>
 			{/* Main Content */}
@@ -40,7 +52,7 @@ const CounterPage = () => {
 
 					<div className="flex justify-center gap-3">
 						<motion.button
-							onClick={() => setCount(count - 1)}
+							onClick={decrease}
 							className="bg-pink-300 hover:bg-pink-400 text-pink-800 px-4 py-2 rounded-lg"
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
@@ -49,7 +61,7 @@ const CounterPage = () => {
 						</motion.button>
 
 						<motion.button
-							onClick={() => setCount(0)}
+							onClick={reset}
 							className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg"
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
@@ -58,7 +70,7 @@ const CounterPage = () => {
 						</motion.button>
 
 						<motion.button
-							onClick={() => setCount(count + 1)}
+							onClick={increase}
 							className="bg-teal-300 hover:bg-teal-400 text-teal-800 px-4 py-2 rounded-lg"
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
