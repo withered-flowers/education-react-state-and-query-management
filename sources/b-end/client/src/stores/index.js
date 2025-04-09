@@ -1,4 +1,7 @@
 import { create } from "zustand";
+// Sekarang kita akan menggunakan immer
+// PERHATIKAN IMPORT-nya bukan package immer secara langsung
+import { immer } from "zustand/middleware/immer";
 
 // Di sini kita akan membuat sebuah store (tempat menampung state secara global)
 // via fungsi `create` dari zustand
@@ -46,4 +49,48 @@ export const useCounterStore = create(
 	}),
 );
 
-export default useCounterStore;
+// Nah untuk melihat pembedanya, mari kita buat sebuah store yang baru dengan nama useCounterImmerStore
+export const useCounterImmerStore = create(
+	// Di sini kita akan memanggil immer terlebih dahulu
+	// anggap saja immer ini akan menjadi "middleware" sebelum memanggil fungsi yang memiliki parameter set
+	immer((set) => ({
+		// Selebihnya di dalam sini kita akan memperlakukannya sama seperti yang sebelum menggunakan immer
+
+		counter: {
+			firstNumber: 200,
+			secondNumber: 750,
+		},
+
+		increaseFirst: () =>
+			// Perbedaannya adalah:
+			// Di dalam fungsi set:
+			// - Langsung mengupdate firstNumber tanpa memerlukan spread operator
+
+			// Hal ini bisa terjadi karena kita sudah membungkus fungsi di dalam immer
+			set((state) => {
+				// Di sini kita memperlakukan state.counter.firstNumber sebagai state yang akan bisa diupdate secara langsung, WALAUPUN sebenarnya state itu sifatnya "immutable" seperti layaknya useState di dalam react
+				state.counter.firstNumber += 1;
+			}),
+
+		decreaseFirst: () =>
+			set((state) => {
+				state.counter.firstNumber -= 1;
+			}),
+
+		increaseSecond: () =>
+			set((state) => {
+				state.counter.secondNumber += 1;
+			}),
+
+		decreaseSecond: () =>
+			set((state) => {
+				state.counter.secondNumber -= 1;
+			}),
+
+		reset: () =>
+			set((state) => {
+				state.counter.firstNumber = 200;
+				state.counter.secondNumber = 750;
+			}),
+	})),
+);

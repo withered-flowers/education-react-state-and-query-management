@@ -1,20 +1,36 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
-import { useState } from "react";
+// ! Bye useState ~
+// import { useState } from "react";
 import CounterCount from "../components/counter/CounterCount";
 
 // Import "hooks" useCounterStore
-import { useCounterStore } from "../stores";
+// import { useCounterStore } from "../stores";
+
+// Import "hooks" useCounterImmerStore
+import { useCounterImmerStore } from "../stores";
 
 const CounterPage = () => {
-	// Di sini kita tinggal import state dan method apa saja yang digunakan
-	const { counter, increaseFirst } = useCounterStore((state) => state);
+	// ! Di sini kita tinggal import state dan method apa saja yang digunakan
+	// ! Tidak digunakan lagi, karena kita akan menggunakan useCounterImmerStore
+	// const { counter, increaseFirst } = useCounterStore((state) => state);
+
+	// Ganti useCounterStore dengan useCounterImmerStore
+	const {
+		counter,
+		increaseFirst,
+		decreaseFirst,
+		increaseSecond,
+		decreaseSecond,
+		reset,
+	} = useCounterImmerStore((state) => state);
 
 	// ! Supaya tidak terjadi bentrok, maka counter akan direname menjadi counterOld
-	const [counterOld, setCounter] = useState({
-		firstNumber: 0,
-		secondNumber: 100,
-	});
+	// ! Pada saat menggunakan useCounterImmerStore, ini sudah tidak dibutuhkan lagi!
+	// const [counterOld, setCounter] = useState({
+	// 	firstNumber: 0,
+	// 	secondNumber: 100,
+	// });
 
 	// ! Supaya tidak bentrok, maka fungsi ini akan dicomment
 	// const increaseFirst = () => {
@@ -24,33 +40,33 @@ const CounterPage = () => {
 	// 	});
 	// };
 
-	const decreaseFirst = () => {
-		setCounter({
-			...counter,
-			firstNumber: counter.firstNumber - 1,
-		});
-	};
+	// const decreaseFirst = () => {
+	// 	setCounter({
+	// 		...counter,
+	// 		firstNumber: counter.firstNumber - 1,
+	// 	});
+	// };
 
-	const increaseSecond = () => {
-		setCounter({
-			...counter,
-			secondNumber: counter.secondNumber + 1,
-		});
-	};
+	// const increaseSecond = () => {
+	// 	setCounter({
+	// 		...counter,
+	// 		secondNumber: counter.secondNumber + 1,
+	// 	});
+	// };
 
-	const decreaseSecond = () => {
-		setCounter({
-			...counter,
-			secondNumber: counter.secondNumber - 1,
-		});
-	};
+	// const decreaseSecond = () => {
+	// 	setCounter({
+	// 		...counter,
+	// 		secondNumber: counter.secondNumber - 1,
+	// 	});
+	// };
 
-	const reset = () => {
-		setCounter({
-			firstNumber: 0,
-			secondNumber: 100,
-		});
-	};
+	// const reset = () => {
+	// 	setCounter({
+	// 		firstNumber: 0,
+	// 		secondNumber: 100,
+	// 	});
+	// };
 
 	return (
 		<>
