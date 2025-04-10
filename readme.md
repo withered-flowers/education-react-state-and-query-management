@@ -25,6 +25,7 @@
     - [Step 4 - Zustand + Immer = steroid kuadrat](#step-4---zustand--immer--steroid-kuadrat)
     - [Step 5 - Welcome to TanStack Query](#step-5---welcome-to-tanstack-query)
     - [Step 6 - Fetch Data dengan TanStack Query](#step-6---fetch-data-dengan-tanstack-query)
+    - [Step 7 - Add New Data dengan TanStack Query](#step-7---add-new-data-dengan-tanstack-query)
 
 ## Pengenalan State Management
 
@@ -1137,4 +1138,16 @@ Adapun langkah-langkahnya adalah sebagai berikut:
     export default FetchDataPage;
     ```
 
-1. Jalankan aplikasi dan lihat di browser, apakah masih berjaalan dengan baik?
+    > Perhatikan dan ingat baik baik queryKeys dengan nama `color` yang kita gunakan di sini yah, karena kita akan menggunakannya di langkah selanjutnya.
+
+1. Jalankan aplikasi dan lihat di browser, apakah masih berjalan dengan baik?
+
+Sampai di titik ini artinya kita sudah berhasil untuk menggantikan state yang sebelumnya kita buat secara mandiri, menjadi lebih "otomatis" karena sudah dihandle dengan baik oleh `TanStack Query`.
+
+### Step 7 - Add New Data dengan TanStack Query
+
+Pada langkah ini kita akan mengganti state untuk melakukan `add new data` yang awalnya ada di component yang terpisah-pisah, akan di-"sederhanakan" dengan `TanStack Query`
+
+Adapun langkah-langkahnya adalah sebagai berikut:
+
+1. Modifikasi file `services/index.js` untuk menambahkan fungsi `addColor` yang akan digunakan untuk menambahkan data warna baru ke server, adapun kodenya adalah sebagai berikut:
