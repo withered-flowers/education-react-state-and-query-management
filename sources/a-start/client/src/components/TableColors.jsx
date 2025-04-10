@@ -1,6 +1,6 @@
 const TableColors = ({ colors }) => {
 	return (
-		<table className="w-full bg-white dark:bg-slate-800 border-collapse">
+		<table className="w-full bg-white border-collapse">
 			<thead>
 				<tr className="bg-tertiary-100 text-tertiary-800">
 					<th className="p-4 text-left">ID</th>

@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "motion/react";
+import { Link } from "react-router";
 
 const NavBar = () => {
 	return (
@@ -14,27 +15,30 @@ const NavBar = () => {
 					Belajar Beruang + Query
 				</motion.div>
 				<div className="flex gap-6">
-					<motion.a
-						href="/"
-						className="hover:text-indigo-700 font-medium"
-						whileHover={{ scale: 1.1 }}
-					>
-						Counter
-					</motion.a>
-					<motion.a
-						href="/data"
-						className="hover:text-indigo-700 font-medium"
-						whileHover={{ scale: 1.1 }}
-					>
-						Fetch Data
-					</motion.a>
-					<motion.a
-						href="/add-data"
-						className="hover:text-indigo-700 font-medium"
-						whileHover={{ scale: 1.1 }}
-					>
-						Add New Data
-					</motion.a>
+					<Link to="/">
+						<motion.div
+							className="hover:text-indigo-700 font-medium"
+							whileHover={{ scale: 1.1 }}
+						>
+							Counter
+						</motion.div>
+					</Link>
+					<Link to="/data">
+						<motion.div
+							className="hover:text-indigo-700 font-medium"
+							whileHover={{ scale: 1.1 }}
+						>
+							Fetch Data
+						</motion.div>
+					</Link>
+					<Link to="/add-data">
+						<motion.div
+							className="hover:text-indigo-700 font-medium"
+							whileHover={{ scale: 1.1 }}
+						>
+							Add New Data
+						</motion.div>
+					</Link>
 				</div>
 			</div>
 		</motion.nav>
