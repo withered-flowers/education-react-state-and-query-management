@@ -1,39 +1,79 @@
-import axios from "axios";
+// ? Di sini axios sudah bisa dicomment, karena digunakan di services
+// import axios from "axios";
 import { animate, stagger } from "motion";
-import { useEffect, useRef, useState } from "react";
+// ? Di sini sudah tidak ada useState-nya, karena state ada di tanstack-query
+import { useEffect, useRef } from "react";
 import LoadingBar from "../components/LoadingBar";
 import TableColors from "../components/TableColors";
 
+// ? Import useQuery dan fetchColors untuk fetch data ala tanstack-query
+import { useQuery } from "@tanstack/react-query";
+import { fetchColors } from "../services";
+
 const FetchDataPage = () => {
-	const [colors, setColors] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
+	// ? Disable seluruh state yang ada di sini, karena semuanya sudah masuk ke tanstack-query
+	// const [colors, setColors] = useState([]);
+	// const [isLoading, setIsLoading] = useState(true);
+	// const [error, setError] = useState(null);
+
+	// ? Untuk ref, tetap digunakan, karena ini berhubungan dengan animasi
 	const progressBarRef = useRef(null);
 
-	useEffect(() => {
-		const fetchColors = async () => {
-			try {
-				setIsLoading(true);
+	// ? Mari kita mulai menggunakan tanstack-query, khususnya untuk fetch data, dengan menggunakan useQuery
+	// useQuery adalah suatu hooks yang disediakan oleh tanstack query untuk melakukan fetch data dari server
+	// useQuery menerima sebuah parameter berupa object
+	// object ini akan memiliki dua property wajib, yaitu queryKey dan queryFn
+	// - queryKey adalah kunci unik yang digunakan untuk mengidentifikasi query
+	// - queryFn adalah fungsi yang digunakan untuk mengambil data dari server
+	//   - (fungsi ini akan menggunakan services yang sudah kita buat sebelumnya)
 
-				// ? [ALT] - Use this if the response from localhost is not working
-				// const response = await axios.get("https://reqres.in/api/colors");
-				const response = await axios.get("http://localhost:3000/colors");
+	// useQuery ini SECARA OTOMATIS akan mengembalikan beberapa state dari server yang siap digunakan:
+	// - isPending: boolean
+	// - isError: boolean
+	// - isSuccess: boolean
+	// - error: object
+	// - data: object
+	const {
+		// ? Walaupun sebenarnya ada isLoading di dalam tanstack query, tapi yang direkomendasikan untuk digunakan adalah isPending.
+		// ? Untuk mengetahui perbedaan isLoading dan isPending, bisa dibaca di sini:
+		// ? - https://isaichenko.dev/blog/is-pending-tanstack-query/
 
-				// ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
-				await new Promise((resolve) => setTimeout(resolve, 2000));
+		// ! Kita berikan alias isPending sebagai isLoading hanya supaya kode di bawah tidak banyak berubah.
+		isPending: isLoading,
+		error,
+		data: colors,
+	} = useQuery({
+		queryKey: ["colors"],
+		// Ingat di sini kita memberikan fungsinya,
+		// ! JANGAN DIINVOKE!
+		queryFn: fetchColors,
+	});
 
-				setColors(response.data.data);
-				setIsLoading(false);
-			} catch (err) {
-				console.log(err);
+	// ! Di sini kita akan menonaktifkan useEffect ini karena sudah menggunakan tanstack query
+	// useEffect(() => {
+	// 	const fetchColors = async () => {
+	// 		try {
+	// 			setIsLoading(true);
 
-				setError("Failed to fetch colors");
-				setIsLoading(false);
-			}
-		};
+	// 			// ? [ALT] - Use this if the response from localhost is not working
+	// 			// const response = await axios.get("https://reqres.in/api/colors");
+	// 			const response = await axios.get("http://localhost:3000/colors");
 
-		fetchColors();
-	}, []);
+	// 			// ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+	// 			await new Promise((resolve) => setTimeout(resolve, 2000));
+
+	// 			setColors(response.data.data);
+	// 			setIsLoading(false);
+	// 		} catch (err) {
+	// 			console.log(err);
+
+	// 			setError("Failed to fetch colors");
+	// 			setIsLoading(false);
+	// 		}
+	// 	};
+
+	// 	fetchColors();
+	// }, []);
 
 	useEffect(() => {
 		if (isLoading && progressBarRef.current) {

@@ -891,3 +891,250 @@ Dikenal juga dengan nama `Query Management`, dan yang populer di komunitas React
 Pada demo ini kita akan menggunakan `TanStack Query`.
 
 ### Step 6 - Fetch Data dengan TanStack Query
+
+Pada langkah ini kita akan mengganti state untuk melakukan `fetch data` yang awalnya ada di component yang terpisah-pisah, akan di-"sederhanakan" dengan `TanStack Query`
+
+Adapun langkah-langkahnya adalah sebagai berikut:
+
+1. Install package `tanstack-query` dengan perintah:
+
+   ```sh
+   npm install @tanstack/react-query
+   npm install -D @tanstack/eslint-plugin-query
+   ```
+
+1. Modifikasi file `main.jsx` untuk menggunakan `QueryClient` dan `QueryClientProvider` dari `@tanstack/react-query`, seperti berikut:
+
+    ```jsx
+    import { StrictMode } from "react";
+    import { createRoot } from "react-dom/client";
+    import "./index.css";
+    import { BrowserRouter } from "react-router";
+    import MyRoutes from "./routes/index.jsx";
+
+    // Import QueryClient and QueryClientProvider dari @tanstack/react-query
+    import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+    // Menginstansiasi QueryClient
+    // QueryClient adalah class yang digunakan untuk mengelola state dari query
+    const queryClient = new QueryClient();
+
+    createRoot(document.getElementById("root")).render(
+      <StrictMode>
+        {/* // QueryClientProvider adalah komponen yang digunakan untuk menyediakan QueryClient ke seluruh aplikasi */}
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <MyRoutes />
+          </BrowserRouter>
+        </QueryClientProvider>
+      </StrictMode>,
+    );
+    ```
+
+1. Buat file baru `services/index.js` yang berfungsi untuk:
+
+   - Mengelola `fetch` data dari API yang kita buat di server
+   - Di dalam file ini kita akan membuat fungsi `fetchColors` dan `addNewColors`
+   - Fungsi `fetchColors` digunakan untuk mengambil data postingan dari API
+   - Fungsi `addNewColors` digunakan untuk menambahkan postingan baru ke API
+
+   Pada langkah ini kita baru membuat filenya saja yah, belum menuliskan kode sama sekali.
+
+1. Copy fungsi `fetchColors` yang ada di dalam file `pages/FetchDataPage.jsx` dan memasukkannya ke dalam file `services/index.js`, serta kodenya dimodifikasi menjadi seperti berikut:
+
+    ```js
+    // ? Jangan lupa import axios di sini
+    import axios from "axios";
+
+    export const fetchColors = async () => {
+      // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+      // try {
+      // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+      // setIsLoading(true);
+
+      // ? [ALT] - Use this if the response from localhost is not working
+      // const response = await axios.get("https://reqres.in/api/colors");
+      const response = await axios.get("http://localhost:3000/colors");
+
+      // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // ! Harus dimodifikasi, karena ini adalah data yang dikembalikan
+      // setColors(response.data.data);
+      return response.data.data;
+
+      // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+      // setIsLoading(false);
+
+      // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+      // } catch (err) {
+      //   console.log(err);
+
+      //   setError("Failed to fetch colors");
+      //   setIsLoading(false);
+      // }
+    };
+
+    // Apabila dituliskan bersih tanpa comment yang membingungkan
+    // Fungsi di atas akan menjadi seperti ini
+    export const fetchColorsWithoutComment = async () => {
+      const response = await axios.get("http://localhost:3000/colors");
+
+      // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      return response.data.data;
+    };
+    ```
+
+1. Modifikasi file `pages/FetchDataPage.jsx` untuk menggunakan hooks `useQuery` dari tanstack-query, sebagai berikut:
+
+    ```jsx
+    // ? Di sini axios sudah bisa dicomment, karena digunakan di services
+    // import axios from "axios";
+    import { animate, stagger } from "motion";
+    // ? Di sini sudah tidak ada useState-nya, karena state ada di tanstack-query
+    import { useEffect, useRef } from "react";
+    import LoadingBar from "../components/LoadingBar";
+    import TableColors from "../components/TableColors";
+
+    // ? Import useQuery dan fetchColors untuk fetch data ala tanstack-query
+    import { useQuery } from "@tanstack/react-query";
+    import { fetchColors } from "../services";
+
+    const FetchDataPage = () => {
+      // ? Disable seluruh state yang ada di sini, karena semuanya sudah masuk ke tanstack-query
+      // const [colors, setColors] = useState([]);
+      // const [isLoading, setIsLoading] = useState(true);
+      // const [error, setError] = useState(null);
+
+      // ? Untuk ref, tetap digunakan, karena ini berhubungan dengan animasi
+      const progressBarRef = useRef(null);
+
+      // ? Mari kita mulai menggunakan tanstack-query, khususnya untuk fetch data, dengan menggunakan useQuery
+      // useQuery adalah suatu hooks yang disediakan oleh tanstack query untuk melakukan fetch data dari server
+      // useQuery menerima sebuah parameter berupa object
+      // object ini akan memiliki dua property wajib, yaitu queryKey dan queryFn
+      // - queryKey adalah kunci unik yang digunakan untuk mengidentifikasi query
+      // - queryFn adalah fungsi yang digunakan untuk mengambil data dari server
+      //   - (fungsi ini akan menggunakan services yang sudah kita buat sebelumnya)
+
+      // useQuery ini SECARA OTOMATIS akan mengembalikan beberapa state dari server yang siap digunakan:
+      // - isPending: boolean
+      // - isError: boolean
+      // - isSuccess: boolean
+      // - error: object
+      // - data: object
+      const {
+        // ? Walaupun sebenarnya ada isLoading di dalam tanstack query, tapi yang direkomendasikan untuk digunakan adalah isPending.
+        // ? Untuk mengetahui perbedaan isLoading dan isPending, bisa dibaca di sini:
+        // ? - https://isaichenko.dev/blog/is-pending-tanstack-query/
+
+        // ! Kita berikan alias isPending sebagai isLoading hanya supaya kode di bawah tidak banyak berubah.
+        isPending: isLoading,
+        error,
+        data: colors,
+      } = useQuery({
+        queryKey: ["colors"],
+        // Ingat di sini kita memberikan fungsinya,
+        // ! JANGAN DIINVOKE!
+        queryFn: fetchColors,
+      });
+
+      // ! Di sini kita akan menonaktifkan useEffect ini karena sudah menggunakan tanstack query
+      // useEffect(() => {
+      //  const fetchColors = async () => {
+      //   try {
+      //    setIsLoading(true);
+
+      //    // ? [ALT] - Use this if the response from localhost is not working
+      //    // const response = await axios.get("https://reqres.in/api/colors");
+      //    const response = await axios.get("http://localhost:3000/colors");
+
+      //    // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+      //    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      //    setColors(response.data.data);
+      //    setIsLoading(false);
+      //   } catch (err) {
+      //    console.log(err);
+
+      //    setError("Failed to fetch colors");
+      //    setIsLoading(false);
+      //   }
+      //  };
+
+      //  fetchColors();
+      // }, []);
+
+      useEffect(() => {
+        if (isLoading && progressBarRef.current) {
+          // Animate progress bar with continuous motion
+          animate(
+            progressBarRef.current,
+            {
+              scaleX: [0, 1.5],
+              x: ["-100%", "100%"],
+            },
+            {
+              duration: 1.5,
+              repeat: Number.POSITIVE_INFINITY,
+              easing: "ease-in-out",
+            },
+          );
+        }
+      }, [isLoading]);
+
+      useEffect(() => {
+        if (!isLoading && colors.length > 0) {
+          // Animate table rows
+          animate(
+            ".color-row",
+            { opacity: [0, 1], y: [20, 0] },
+            { delay: stagger(0.1), duration: 0.5, easing: "ease-in-out" },
+          );
+
+          // Animate color cells
+          animate(
+            ".color-cell",
+            { scale: [0.8, 1], rotate: [5, 0] },
+            { delay: stagger(0.05, { start: 0.2 }), duration: 0.6 },
+          );
+        }
+      }, [isLoading, colors]);
+
+      if (isLoading) {
+        return (
+          <main className="flex-grow flex flex-col items-center justify-center p-6">
+            <LoadingBar progressBarRef={progressBarRef} />
+          </main>
+        );
+      }
+
+      if (error) {
+        return (
+          <main className="flex-grow flex items-center justify-center p-6">
+            <div className="text-xl font-semibold text-secondary-600 bg-secondary-100 p-4 rounded-lg shadow">
+              {error}
+            </div>
+          </main>
+        );
+      }
+
+      return (
+        <main className="flex-grow flex flex-col items-center justify-center p-6 text-primary-800">
+          <h1 className="text-3xl font-bold mb-8 text-slate-500">
+            Colors from BackEnd
+          </h1>
+
+          <div className="w-full max-w-3xl overflow-hidden rounded-lg shadow-lg">
+            <TableColors colors={colors} />
+          </div>
+        </main>
+      );
+    };
+
+    export default FetchDataPage;
+    ```
+
+1. Jalankan aplikasi dan lihat di browser, apakah masih berjaalan dengan baik?
