@@ -23,6 +23,8 @@
     - [Step 2 - Setup Project (Client)](#step-2---setup-project-client)
     - [Step 3 - State Management dengan `Zustand`](#step-3---state-management-dengan-zustand)
     - [Step 4 - Zustand + Immer = steroid kuadrat](#step-4---zustand--immer--steroid-kuadrat)
+    - [Step 5 - Welcome to TanStack Query](#step-5---welcome-to-tanstack-query)
+    - [Step 6 - Fetch Data dengan TanStack Query](#step-6---fetch-data-dengan-tanstack-query)
 
 ## Pengenalan State Management
 
@@ -339,9 +341,20 @@ Bukalah folder `sources/a-start` dan kita akan mulai untuk demo.
   - [`React Hook Form`](https://react-hook-form.com/)
   - [`React Router`](https://reactrouter.com/)
 
+Demo ini secara garis besarnya adalah sebagai berikut:
+
+- Mengganti state `menghitung angka` dan seluruh fungsi yang berhubungan (_deterministik_) dengan menggunakan `zustand`
+- Mengganti state `fetcher data` dan `tambah data` dan seluruh fungsi yang berhubungan (_non-deterministik_) dengan menggunakan `tanstack-query`
+
 Yuk, kita mulai!
 
 ### Step 1 - Setup Project (Server)
+
+Pastikan sebelum menuju langkah ini, situ sudah:
+
+- Menginstall `git`
+- Menginstall `bun` atau `node`
+- Clone Repo ini
 
 > Apabila tidak ingin install `bun` atau tidak menggunakan `bun`, maka step ini boleh di-skip yah !
 
@@ -841,3 +854,40 @@ Langkah-langkahnya adalah sebagai berikut:
    Apakah tetap berjalan sama dengan sebelumnya atau tidak?
 
 Sampai pada titik ini kita sudah bisa menggunakan `zustand` dengan `immer` dengan cukup menyenangkan bukan?
+
+Mari kita masuk ke permasalahan selanjutnya:
+
+Ini kan "state" biasa saja, yang sifatnya deterministik / _client state_.
+
+> Namun, Gimana jika kita ingin membuat state yang non-deterministik / _server state_? (misalnya, data tarikan dari API yang harus _ditungguin_, yang hasilnya bisa jadi berhasil ataupun error?)
+
+Nah untuk menyelesaikan hal seperti ini, sebenarnya `zustand` juga bisa melakukannya, karena di `zustand`, fungsi di dalam store boleh bersifat `async`.
+
+**TAPI**, bila kita menggunakan `zustand` saja, **SELURUH** state dan fungsi yang digunakan untuk _server state_ **HARUS** di-_handle_ sendiri.
+
+Ini artinya:
+
+- _server state_ (non-deterministik) (e.g. `isLoading`, `isPending`, `error`, dan `data`) harus di-_handle_ sendiri.
+- Method yang berhubungan dengan _server state_ (non-deterministik) (`setIsLoading`, `setIsPending`, `setError`, `setData`, `fetchData`) harus di-_handle_ sendiri juga.
+
+WAH, hal ini akan menjadi seperti "state" yang ujungnya di bawa ke `zustand` doank donk yah?
+
+Malah jadi seperti "cuma mindahin state" dari Component ke `zustand`...
+
+Apakah hal seperti ini sudah cukup menyenangkan?
+
+Kalau sudah cukup, itu artinya, materi selesai sampai di sini yah, tidak perlu melihat langkah selanjutnya lagi 😈.
+
+### Step 5 - Welcome to TanStack Query
+
+`zustand` pada dasarnya adalah `State Management`, yang digunakan untuk meng-handle state yang hidupnya di client (`client state`)
+
+Tapi apabila berhubungan dengan penarikan data dari eksternal (`server state`), ada baiknya kita tidak menggunakan `zustand` saja, karena jadinya akan terlalu "manual".
+
+Nah untuk itu kita harus menggunakan `State Management` yang ditujukan untuk menghandle `server state`.
+
+Dikenal juga dengan nama `Query Management`, dan yang populer di komunitas React adalah `Redux Toolkit Query (RTK Query)` dan `TanStack Query`.
+
+Pada demo ini kita akan menggunakan `TanStack Query`.
+
+### Step 6 - Fetch Data dengan TanStack Query
