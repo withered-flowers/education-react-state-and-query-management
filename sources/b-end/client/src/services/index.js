@@ -40,3 +40,18 @@ export const fetchColorsWithoutComment = async () => {
 
 	return response.data.data;
 };
+
+// Fungsi untuk menambahkan warna baru
+// Fokusnya hanyalah pada data yang dikirim ke server
+// ! TIDAK MEMILIKI UI LOGIC!
+export const addColor = async (colorData) => {
+	const response = await axios.post("http://localhost:3000/colors", {
+		...colorData,
+		year: Number(colorData.year),
+	});
+
+	// ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+	await new Promise((resolve) => setTimeout(resolve, 2000));
+
+	return response.data;
+};

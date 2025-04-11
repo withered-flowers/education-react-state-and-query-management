@@ -906,31 +906,31 @@ Adapun langkah-langkahnya adalah sebagai berikut:
 
 1. Modifikasi file `main.jsx` untuk menggunakan `QueryClient` dan `QueryClientProvider` dari `@tanstack/react-query`, seperti berikut:
 
-    ```jsx
-    import { StrictMode } from "react";
-    import { createRoot } from "react-dom/client";
-    import "./index.css";
-    import { BrowserRouter } from "react-router";
-    import MyRoutes from "./routes/index.jsx";
+   ```jsx
+   import { StrictMode } from "react";
+   import { createRoot } from "react-dom/client";
+   import "./index.css";
+   import { BrowserRouter } from "react-router";
+   import MyRoutes from "./routes/index.jsx";
 
-    // Import QueryClient and QueryClientProvider dari @tanstack/react-query
-    import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+   // Import QueryClient and QueryClientProvider dari @tanstack/react-query
+   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-    // Menginstansiasi QueryClient
-    // QueryClient adalah class yang digunakan untuk mengelola state dari query
-    const queryClient = new QueryClient();
+   // Menginstansiasi QueryClient
+   // QueryClient adalah class yang digunakan untuk mengelola state dari query
+   const queryClient = new QueryClient();
 
-    createRoot(document.getElementById("root")).render(
-      <StrictMode>
-        {/* // QueryClientProvider adalah komponen yang digunakan untuk menyediakan QueryClient ke seluruh aplikasi */}
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <MyRoutes />
-          </BrowserRouter>
-        </QueryClientProvider>
-      </StrictMode>,
-    );
-    ```
+   createRoot(document.getElementById("root")).render(
+     <StrictMode>
+       {/* // QueryClientProvider adalah komponen yang digunakan untuk menyediakan QueryClient ke seluruh aplikasi */}
+       <QueryClientProvider client={queryClient}>
+         <BrowserRouter>
+           <MyRoutes />
+         </BrowserRouter>
+       </QueryClientProvider>
+     </StrictMode>,
+   );
+   ```
 
 1. Buat file baru `services/index.js` yang berfungsi untuk:
 
@@ -943,202 +943,217 @@ Adapun langkah-langkahnya adalah sebagai berikut:
 
 1. Copy fungsi `fetchColors` yang ada di dalam file `pages/FetchDataPage.jsx` dan memasukkannya ke dalam file `services/index.js`, serta kodenya dimodifikasi menjadi seperti berikut:
 
-    ```js
-    // ? Jangan lupa import axios di sini
-    import axios from "axios";
+   ```js
+   // ? Jangan lupa import axios di sini
+   import axios from "axios";
 
-    export const fetchColors = async () => {
-      // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
-      // try {
-      // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
-      // setIsLoading(true);
+   export const fetchColors = async () => {
+     // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+     // try {
+     // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+     // setIsLoading(true);
 
-      // ? [ALT] - Use this if the response from localhost is not working
-      // const response = await axios.get("https://reqres.in/api/colors");
-      const response = await axios.get("http://localhost:3000/colors");
+     // ? [ALT] - Use this if the response from localhost is not working
+     // const response = await axios.get("https://reqres.in/api/colors");
+     const response = await axios.get("http://localhost:3000/colors");
 
-      // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+     // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // ! Harus dimodifikasi, karena ini adalah data yang dikembalikan
-      // setColors(response.data.data);
-      return response.data.data;
+     // ! Harus dimodifikasi, karena ini adalah data yang dikembalikan
+     // setColors(response.data.data);
+     return response.data.data;
 
-      // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
-      // setIsLoading(false);
+     // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+     // setIsLoading(false);
 
-      // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
-      // } catch (err) {
-      //   console.log(err);
+     // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+     // } catch (err) {
+     //   console.log(err);
 
-      //   setError("Failed to fetch colors");
-      //   setIsLoading(false);
-      // }
-    };
+     //   setError("Failed to fetch colors");
+     //   setIsLoading(false);
+     // }
+   };
 
-    // Apabila dituliskan bersih tanpa comment yang membingungkan
-    // Fungsi di atas akan menjadi seperti ini
-    export const fetchColorsWithoutComment = async () => {
-      const response = await axios.get("http://localhost:3000/colors");
+   // Apabila dituliskan bersih tanpa comment yang membingungkan
+   // Fungsi di atas akan menjadi seperti ini
+   export const fetchColorsWithoutComment = async () => {
+     const response = await axios.get("http://localhost:3000/colors");
 
-      // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+     // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      return response.data.data;
-    };
-    ```
+     return response.data.data;
+   };
+   ```
 
 1. Modifikasi file `pages/FetchDataPage.jsx` untuk menggunakan hooks `useQuery` dari tanstack-query, sebagai berikut:
 
-    ```jsx
-    // ? Di sini axios sudah bisa dicomment, karena digunakan di services
-    // import axios from "axios";
-    import { animate, stagger } from "motion";
-    // ? Di sini sudah tidak ada useState-nya, karena state ada di tanstack-query
-    import { useEffect, useRef } from "react";
-    import LoadingBar from "../components/LoadingBar";
-    import TableColors from "../components/TableColors";
+   ```jsx
+   // ? Di sini axios sudah bisa dicomment, karena digunakan di services
+   // import axios from "axios";
+   import { animate, stagger } from "motion";
+   // ? Di sini sudah tidak ada useState-nya, karena state ada di tanstack-query
+   import { useEffect, useRef } from "react";
+   import LoadingBar from "../components/LoadingBar";
+   import TableColors from "../components/TableColors";
 
-    // ? Import useQuery dan fetchColors untuk fetch data ala tanstack-query
-    import { useQuery } from "@tanstack/react-query";
-    import { fetchColors } from "../services";
+   // ? Import useQuery dan fetchColors untuk fetch data ala tanstack-query
+   import { useQuery } from "@tanstack/react-query";
+   import { fetchColors } from "../services";
 
-    const FetchDataPage = () => {
-      // ? Disable seluruh state yang ada di sini, karena semuanya sudah masuk ke tanstack-query
-      // const [colors, setColors] = useState([]);
-      // const [isLoading, setIsLoading] = useState(true);
-      // const [error, setError] = useState(null);
+   const FetchDataPage = () => {
+     // ? Disable seluruh state yang ada di sini, karena semuanya sudah masuk ke tanstack-query
+     // const [colors, setColors] = useState([]);
+     // const [isLoading, setIsLoading] = useState(true);
+     // const [error, setError] = useState(null);
 
-      // ? Untuk ref, tetap digunakan, karena ini berhubungan dengan animasi
-      const progressBarRef = useRef(null);
+     // ? Untuk ref, tetap digunakan, karena ini berhubungan dengan animasi
+     const progressBarRef = useRef(null);
 
-      // ? Mari kita mulai menggunakan tanstack-query, khususnya untuk fetch data, dengan menggunakan useQuery
-      // useQuery adalah suatu hooks yang disediakan oleh tanstack query untuk melakukan fetch data dari server
-      // useQuery menerima sebuah parameter berupa object
-      // object ini akan memiliki dua property wajib, yaitu queryKey dan queryFn
-      // - queryKey adalah kunci unik yang digunakan untuk mengidentifikasi query
-      // - queryFn adalah fungsi yang digunakan untuk mengambil data dari server
-      //   - (fungsi ini akan menggunakan services yang sudah kita buat sebelumnya)
+     // ? Mari kita mulai menggunakan tanstack-query, khususnya untuk fetch data, dengan menggunakan useQuery
+     // useQuery adalah suatu hooks yang disediakan oleh tanstack query untuk melakukan fetch data dari server
+     // useQuery menerima sebuah parameter berupa object
+     // object ini akan memiliki dua property wajib, yaitu queryKey dan queryFn
+     // - queryKey adalah kunci unik yang digunakan untuk mengidentifikasi query
+     // - queryFn adalah fungsi yang digunakan untuk mengambil data dari server
+     //   - (fungsi ini akan menggunakan services yang sudah kita buat sebelumnya)
 
-      // useQuery ini SECARA OTOMATIS akan mengembalikan beberapa state dari server yang siap digunakan:
-      // - isPending: boolean
-      // - isError: boolean
-      // - isSuccess: boolean
-      // - error: object
-      // - data: object
-      const {
-        // ? Walaupun sebenarnya ada isLoading di dalam tanstack query, tapi yang direkomendasikan untuk digunakan adalah isPending.
-        // ? Untuk mengetahui perbedaan isLoading dan isPending, bisa dibaca di sini:
-        // ? - https://isaichenko.dev/blog/is-pending-tanstack-query/
+     // useQuery ini SECARA OTOMATIS akan mengembalikan beberapa state dari server yang siap digunakan:
+     // - isPending: boolean
+     // - isError: boolean
+     // - isSuccess: boolean
+     // - error: object
+     // - data: object
+     const {
+       // ? Walaupun sebenarnya ada isLoading di dalam tanstack query, tapi yang direkomendasikan untuk digunakan adalah isPending.
+       // ? Tapi dalam aplikasi kita, kita ingin untuk SELALU menampilkan loading spinner ketika data sedang diambil.
+       // ? Sehingga kita juga harus menggunakan isFetching untuk mengetahui apakah data sedang diambil dari server.
+       // ? Untuk mengetahui perbedaan isLoading, isFetching, dan isPending, bisa dibaca di sini:
+       // ? - https://isaichenko.dev/blog/is-pending-tanstack-query/
 
-        // ! Kita berikan alias isPending sebagai isLoading hanya supaya kode di bawah tidak banyak berubah.
-        isPending: isLoading,
-        error,
-        data: colors,
-      } = useQuery({
-        queryKey: ["colors"],
-        // Ingat di sini kita memberikan fungsinya,
-        // ! JANGAN DIINVOKE!
-        queryFn: fetchColors,
-      });
+       // ! Kita berikan alias isPending sebagai isLoading hanya supaya kode di bawah tidak banyak berubah.
+       isPending,
+       isFetching,
+       error,
+       data: colors,
+     } = useQuery({
+       queryKey: ["colors"],
+       // Ingat di sini kita memberikan fungsinya,
+       // ! JANGAN DIINVOKE!
+       queryFn: fetchColors,
+     });
 
-      // ! Di sini kita akan menonaktifkan useEffect ini karena sudah menggunakan tanstack query
-      // useEffect(() => {
-      //  const fetchColors = async () => {
-      //   try {
-      //    setIsLoading(true);
+     // ! Di sini kita akan menonaktifkan useEffect ini karena sudah menggunakan tanstack query
+     // useEffect(() => {
+     // 	const fetchColors = async () => {
+     // 		try {
+     // 			setIsLoading(true);
 
-      //    // ? [ALT] - Use this if the response from localhost is not working
-      //    // const response = await axios.get("https://reqres.in/api/colors");
-      //    const response = await axios.get("http://localhost:3000/colors");
+     // 			// ? [ALT] - Use this if the response from localhost is not working
+     // 			// const response = await axios.get("https://reqres.in/api/colors");
+     // 			const response = await axios.get("http://localhost:3000/colors");
 
-      //    // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
-      //    await new Promise((resolve) => setTimeout(resolve, 2000));
+     // 			// ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     // 			await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      //    setColors(response.data.data);
-      //    setIsLoading(false);
-      //   } catch (err) {
-      //    console.log(err);
+     // 			setColors(response.data.data);
+     // 			setIsLoading(false);
+     // 		} catch (err) {
+     // 			console.log(err);
 
-      //    setError("Failed to fetch colors");
-      //    setIsLoading(false);
-      //   }
-      //  };
+     // 			setError("Failed to fetch colors");
+     // 			setIsLoading(false);
+     // 		}
+     // 	};
 
-      //  fetchColors();
-      // }, []);
+     // 	fetchColors();
+     // }, []);
 
-      useEffect(() => {
-        if (isLoading && progressBarRef.current) {
-          // Animate progress bar with continuous motion
-          animate(
-            progressBarRef.current,
-            {
-              scaleX: [0, 1.5],
-              x: ["-100%", "100%"],
-            },
-            {
-              duration: 1.5,
-              repeat: Number.POSITIVE_INFINITY,
-              easing: "ease-in-out",
-            },
-          );
-        }
-      }, [isLoading]);
+     // Nah supaya kita bisa menampilkan loading spinner ketika data sedang diambil dari server,
+     // kita harus menggabungkan isPending dengan isFetching.
 
-      useEffect(() => {
-        if (!isLoading && colors.length > 0) {
-          // Animate table rows
-          animate(
-            ".color-row",
-            { opacity: [0, 1], y: [20, 0] },
-            { delay: stagger(0.1), duration: 0.5, easing: "ease-in-out" },
-          );
+     // ? Supaya kode di bawah kita ini tidak berubah banyak, maka kombinasi dari isPending dan isFetching kita namanya dengan isLoading saja.
+     const isLoading = isPending || isFetching;
 
-          // Animate color cells
-          animate(
-            ".color-cell",
-            { scale: [0.8, 1], rotate: [5, 0] },
-            { delay: stagger(0.05, { start: 0.2 }), duration: 0.6 },
-          );
-        }
-      }, [isLoading, colors]);
+     useEffect(() => {
+       if (isLoading && progressBarRef.current) {
+         // Animate progress bar with continuous motion
+         animate(
+           progressBarRef.current,
+           {
+             scaleX: [0, 1.5],
+             x: ["-100%", "100%"],
+           },
+           {
+             duration: 1.5,
+             repeat: Number.POSITIVE_INFINITY,
+             easing: "ease-in-out",
+           },
+         );
+       }
+     }, [isLoading]);
 
-      if (isLoading) {
-        return (
-          <main className="flex-grow flex flex-col items-center justify-center p-6">
-            <LoadingBar progressBarRef={progressBarRef} />
-          </main>
-        );
-      }
+     useEffect(() => {
+       if (!isLoading && colors.length > 0) {
+         // Animate table rows
+         animate(
+           ".color-row",
+           { opacity: [0, 1], y: [20, 0] },
+           { delay: stagger(0.1), duration: 0.5, easing: "ease-in-out" },
+         );
 
-      if (error) {
-        return (
-          <main className="flex-grow flex items-center justify-center p-6">
-            <div className="text-xl font-semibold text-secondary-600 bg-secondary-100 p-4 rounded-lg shadow">
-              {error}
-            </div>
-          </main>
-        );
-      }
+         // Animate color cells
+         animate(
+           ".color-cell",
+           { scale: [0.8, 1], rotate: [5, 0] },
+           { delay: stagger(0.05, { start: 0.2 }), duration: 0.6 },
+         );
+       }
+     }, [isLoading, colors]);
 
-      return (
-        <main className="flex-grow flex flex-col items-center justify-center p-6 text-primary-800">
-          <h1 className="text-3xl font-bold mb-8 text-slate-500">
-            Colors from BackEnd
-          </h1>
+     if (isLoading) {
+       return (
+         <main className="flex-grow flex flex-col items-center justify-center p-6">
+           <LoadingBar progressBarRef={progressBarRef} />
+         </main>
+       );
+     }
 
-          <div className="w-full max-w-3xl overflow-hidden rounded-lg shadow-lg">
-            <TableColors colors={colors} />
-          </div>
-        </main>
-      );
-    };
+     if (error) {
+       return (
+         <main className="flex-grow flex items-center justify-center p-6">
+           <div className="text-xl font-semibold text-secondary-600 bg-secondary-100 p-4 rounded-lg shadow">
+             {error}
+           </div>
+         </main>
+       );
+     }
 
-    export default FetchDataPage;
-    ```
+     return (
+       <main className="flex-grow flex flex-col items-center justify-center p-6 text-primary-800">
+         <h1 className="text-3xl font-bold mb-8 text-slate-500">Colors from BackEnd</h1>
 
-    > Perhatikan dan ingat baik baik queryKeys dengan nama `color` yang kita gunakan di sini yah, karena kita akan menggunakannya di langkah selanjutnya.
+         <div className="w-full max-w-3xl overflow-hidden rounded-lg shadow-lg">
+           <TableColors colors={colors} />
+         </div>
+       </main>
+     );
+   };
+
+   export default FetchDataPage;
+   ```
+
+   Perhatikan bahwa di sini kita menggunakan `isPending` dan `isFetching` (bukan `isLoading` secara langsung) dari TanStack Query.
+
+   Untuk perbedaannya adalah sebagai berikut:
+
+   |      Aspek       |           isLoading           |                   isFetching                   |                    isPending                     |
+   | :--------------: | :---------------------------: | :--------------------------------------------: | :----------------------------------------------: |
+   |   Kapan aktif?   | Saat initial load tanpa data. |     Saat mengambil atau memperbarui data.      |         Saat permintaan sedang diproses.         |
+   |  Data tersedia?  |  Tidak ada data sama sekali.  |            Data mungkin sudah ada.             | Tidak terkait langsung dengan ketersediaan data. |
+   | Penggunaan utama |   Menampilkan loading awal.   | Menampilkan status pengambilan atau pembaruan. |   Menunjukkan proses yang sedang berlangsung.    |
 
 1. Jalankan aplikasi dan lihat di browser, apakah masih berjalan dengan baik?
 
@@ -1151,3 +1166,239 @@ Pada langkah ini kita akan mengganti state untuk melakukan `add new data` yang a
 Adapun langkah-langkahnya adalah sebagai berikut:
 
 1. Modifikasi file `services/index.js` untuk menambahkan fungsi `addColor` yang akan digunakan untuk menambahkan data warna baru ke server, adapun kodenya adalah sebagai berikut:
+
+   ```js
+   // ? Jangan lupa import axios di sini
+   import axios from "axios";
+
+   export const fetchColors = async () => {
+     // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+     // try {
+     // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+     // setIsLoading(true);
+
+     // ? [ALT] - Use this if the response from localhost is not working
+     // const response = await axios.get("https://reqres.in/api/colors");
+     const response = await axios.get("http://localhost:3000/colors");
+
+     // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+     // ! Harus dimodifikasi, karena ini adalah data yang dikembalikan
+     // setColors(response.data.data);
+     return response.data.data;
+
+     // ! Tidak dibutuhkan lagi, karena nanti di-urus oleh tanstack query
+     // setIsLoading(false);
+
+     // Tidak membutuhkan try-catch, karena nanti error diurus oleh tanstack query
+     // } catch (err) {
+     //   console.log(err);
+
+     //   setError("Failed to fetch colors");
+     //   setIsLoading(false);
+     // }
+   };
+
+   // Apabila dituliskan bersih tanpa comment yang membingungkan
+   // Fungsi di atas akan menjadi seperti ini
+   export const fetchColorsWithoutComment = async () => {
+     const response = await axios.get("http://localhost:3000/colors");
+
+     // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+     return response.data.data;
+   };
+
+   // Fungsi untuk menambahkan warna baru
+   // Fokusnya hanyalah pada data yang dikirim ke server
+   // ! TIDAK MEMILIKI UI LOGIC!
+   export const addColor = async (colorData) => {
+     const response = await axios.post("http://localhost:3000/colors", {
+       ...colorData,
+       year: Number(colorData.year),
+     });
+
+     // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+     return response.data;
+   };
+   ```
+
+1. Modifikasi file `pages/AddDataPage.jsx` untuk menggunakan `useMutation` dari tanstack query (bukan `useQuery` yah!).
+
+   - Ambil data = `useQuery`
+   - Mengubah data = `useMutation`
+
+   ```jsx
+   import { animate, stagger } from "motion";
+   import { useEffect, useRef, useState } from "react";
+   import { useForm } from "react-hook-form";
+   import ErrorSubmit from "../components/add-data/ErrorSubmit";
+   import FormAddColor from "../components/add-data/FormAddColor";
+   import SuccessSubmit from "../components/add-data/SuccessSubmit";
+
+   // Import useMutation dari tanstack
+   import { useMutation } from "@tanstack/react-query";
+
+   // Import addColor dari services yang sudah dibuat sebelumnya
+   import { addColor } from "../services";
+
+   const AddDataPage = () => {
+     const [success, setSuccess] = useState(null);
+     const [error, setError] = useState(null);
+     const formRef = useRef(null);
+     const successIconRef = useRef(null);
+
+     const {
+       register,
+       handleSubmit,
+       reset,
+       setValue,
+       watch,
+       formState: { errors },
+     } = useForm({
+       defaultValues: {
+         name: "",
+         year: new Date().getFullYear(),
+         color: "#88e0c0",
+         pantone_value: "",
+       },
+     });
+
+     // ? Di sini kita akan menggunakan useMutation dari tanstack
+
+     // ? useMutation menerima parameter options yang berisi:
+     // ? - mutateFn: function untuk melakukan mutation
+     // ? - onSuccess: function untuk menangani response dari mutation
+     // ? - onError: function untuk menangani error dari mutation
+
+     // ? useMutation akan mengembalikan objek yang berisi:
+     // ? - mutate: function untuk melakukan mutation
+     // ? - isPending: boolean untuk mengecek apakah mutation sedang berlangsung
+     const {
+       mutate,
+
+       // Supaya tidak mengubah kode di bawah, kita berikan alias isSubmitting,
+       isPending: isSubmitting,
+     } = useMutation({
+       mutationFn: addColor,
+       onSuccess: (data) => {
+         // Animate form on success
+         animate(
+           formRef.current,
+           { scale: [1, 0.98, 1], y: [0, -5, 0] },
+           { duration: 0.5, easing: "ease-in-out" },
+         );
+
+         // ? Modif value dari response.data.data.name -> data.data.name
+         // ? karena sekarang variable data dari argumen onSuccess
+         setSuccess(`Color "${data.data.name}" added successfully!`);
+         reset(); // Reset form fields
+
+         // Animate success icon
+         if (successIconRef.current) {
+           animate(
+             successIconRef.current,
+             { scale: [0, 1.2, 1], rotate: [0, 10, 0] },
+             { duration: 0.6, easing: "ease-out" },
+           );
+         }
+       },
+       // ? Instead of menggunakan try-catch untuk mendapatkan error-nya
+       // ? Di sini kita akan menggunakan onError untuk menangkap error pada saat terjadi mutasi data
+       onError: (err) => {
+         console.error(err);
+         setError(err.response?.data?.message || "Failed to add color");
+
+         // Shake animation for error
+         animate(
+           formRef.current,
+           { x: [0, -10, 10, -10, 10, 0] },
+           { duration: 0.5, easing: "ease-in-out" },
+         );
+       },
+     });
+
+     // Watch the color value
+     // Used to set the color input value (either via hex / color picker)
+     const colorValue = watch("color");
+
+     // Nah di sini kita akan mengganti logic untuk melakukan onSubmit-nya
+     const onSubmit = (data) => {
+       setError(null);
+       setSuccess(null);
+
+       // TADA! di sini kita hanya perlu memanggil "mutation" saja,
+       // karena selebihnya sudah di handle di dalam hooks useMutation itu sendiri
+       mutate(data);
+     };
+
+     // Animate form elements on initial render
+     useEffect(() => {
+       if (formRef.current) {
+         // Animate form container
+         animate(
+           formRef.current,
+           { opacity: [0, 1], y: [20, 0] },
+           { duration: 0.6, easing: "ease-out" },
+         );
+
+         // Animate form fields
+         animate(
+           ".form-field",
+           { opacity: [0, 1], x: [-20, 0] },
+           { delay: stagger(0.1), duration: 0.5, easing: "ease-out" },
+         );
+       }
+     }, []);
+
+     return (
+       <main className="flex-grow flex flex-col items-center justify-center p-6 bg-primary-50">
+         <div
+           className="w-full max-w-2xl rounded-lg shadow-lg bg-white overflow-hidden"
+           ref={formRef}
+         >
+           <div className="bg-gradient-to-r from-primary-400 to-tertiary-400 p-6 text-white">
+             <h1 className="text-3xl font-bold">Add New Color</h1>
+             <p className="mt-2 opacity-90">
+               Fill the form below to add a new color to the collection
+             </p>
+           </div>
+
+           {success && <SuccessSubmit success={success} ref={successIconRef} />}
+
+           {error && <ErrorSubmit error={error} />}
+
+           <FormAddColor
+             register={register}
+             handleSubmit={handleSubmit}
+             onSubmit={onSubmit}
+             errors={errors}
+             isSubmitting={isSubmitting}
+             colorValue={colorValue}
+             setValue={setValue}
+           />
+         </div>
+       </main>
+     );
+   };
+
+   export default AddDataPage;
+   ```
+
+1. Buka browser dan lihat hasilnya, apakah sudah bisa berhasil mengirimkan data ke server?
+1. Jika sudah berhasil, cobalah buka kembali halaman `Fetch Data`-nya, apakah data sudah berhasil bertambah?
+
+Sampai di titik ini, artinya kita sudah berhasil mengimplementasikan fitur tambah data dengan menggunakan useMutation yah.
+
+Dan sampai di titik ini juga, artinya adalah kita sudah berhasil mempelajari `zustand` dan `tanstack query` dengan baik !
+
+Cukup mudah bukan?
+
+## References
+
+- [Zustand](https://github.com/pmndrs/zustand)
+- [Tanstack Query](https://tanstack.com/query/v4/)

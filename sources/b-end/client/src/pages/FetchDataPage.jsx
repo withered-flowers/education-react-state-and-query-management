@@ -35,11 +35,14 @@ const FetchDataPage = () => {
 	// - data: object
 	const {
 		// ? Walaupun sebenarnya ada isLoading di dalam tanstack query, tapi yang direkomendasikan untuk digunakan adalah isPending.
-		// ? Untuk mengetahui perbedaan isLoading dan isPending, bisa dibaca di sini:
+		// ? Tapi dalam aplikasi kita, kita ingin untuk SELALU menampilkan loading spinner ketika data sedang diambil.
+		// ? Sehingga kita juga harus menggunakan isFetching untuk mengetahui apakah data sedang diambil dari server.
+		// ? Untuk mengetahui perbedaan isLoading, isFetching, dan isPending, bisa dibaca di sini:
 		// ? - https://isaichenko.dev/blog/is-pending-tanstack-query/
 
 		// ! Kita berikan alias isPending sebagai isLoading hanya supaya kode di bawah tidak banyak berubah.
-		isPending: isLoading,
+		isPending,
+		isFetching,
 		error,
 		data: colors,
 	} = useQuery({
@@ -74,6 +77,12 @@ const FetchDataPage = () => {
 
 	// 	fetchColors();
 	// }, []);
+
+	// Nah supaya kita bisa menampilkan loading spinner ketika data sedang diambil dari server,
+	// kita harus menggabungkan isPending dengan isFetching.
+
+	// ? Supaya kode di bawah kita ini tidak berubah banyak, maka kombinasi dari isPending dan isFetching kita namanya dengan isLoading saja.
+	const isLoading = isPending || isFetching;
 
 	useEffect(() => {
 		if (isLoading && progressBarRef.current) {
