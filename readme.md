@@ -26,6 +26,7 @@
     - [Step 5 - Welcome to TanStack Query](#step-5---welcome-to-tanstack-query)
     - [Step 6 - Fetch Data dengan TanStack Query](#step-6---fetch-data-dengan-tanstack-query)
     - [Step 7 - Add New Data dengan TanStack Query](#step-7---add-new-data-dengan-tanstack-query)
+  - [References](#references)
 
 ## Pengenalan State Management
 
@@ -1047,28 +1048,28 @@ Adapun langkah-langkahnya adalah sebagai berikut:
 
      // ! Di sini kita akan menonaktifkan useEffect ini karena sudah menggunakan tanstack query
      // useEffect(() => {
-     // 	const fetchColors = async () => {
-     // 		try {
-     // 			setIsLoading(true);
+     //  const fetchColors = async () => {
+     //   try {
+     //    setIsLoading(true);
 
-     // 			// ? [ALT] - Use this if the response from localhost is not working
-     // 			// const response = await axios.get("https://reqres.in/api/colors");
-     // 			const response = await axios.get("http://localhost:3000/colors");
+     //    // ? [ALT] - Use this if the response from localhost is not working
+     //    // const response = await axios.get("https://reqres.in/api/colors");
+     //    const response = await axios.get("http://localhost:3000/colors");
 
-     // 			// ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
-     // 			await new Promise((resolve) => setTimeout(resolve, 2000));
+     //    // ! ONLY FOR DEV PURPOSE - Sleep 2 seconds
+     //    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-     // 			setColors(response.data.data);
-     // 			setIsLoading(false);
-     // 		} catch (err) {
-     // 			console.log(err);
+     //    setColors(response.data.data);
+     //    setIsLoading(false);
+     //   } catch (err) {
+     //    console.log(err);
 
-     // 			setError("Failed to fetch colors");
-     // 			setIsLoading(false);
-     // 		}
-     // 	};
+     //    setError("Failed to fetch colors");
+     //    setIsLoading(false);
+     //   }
+     //  };
 
-     // 	fetchColors();
+     //  fetchColors();
      // }, []);
 
      // Nah supaya kita bisa menampilkan loading spinner ketika data sedang diambil dari server,
